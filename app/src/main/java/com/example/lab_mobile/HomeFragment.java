@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lab_mobile.adapters.PostAdapter;
 import com.example.lab_mobile.database.AppDatabase;
 import com.example.lab_mobile.models.Post;
+import com.example.lab_mobile.models.UnsplashPhoto;
 import com.example.lab_mobile.network.ApiService;
 import com.example.lab_mobile.network.RetrofitClient;
 
@@ -39,6 +40,10 @@ public class HomeFragment extends Fragment {
     private AppDatabase db;
     private ExecutorService executorService;
     private Handler mainHandler;
+
+    private int currentPage = 1;
+    private boolean isLoading = false;
+    private static final int PAGE_SIZE = 10;
 
     @Nullable
     @Override
@@ -61,37 +66,79 @@ public class HomeFragment extends Fragment {
         executorService = Executors.newSingleThreadExecutor();
         mainHandler = new Handler(Looper.getMainLooper());
 
-        btnRefresh.setOnClickListener(v -> fetchPostsFromApi());
+        btnRefresh.setOnClickListener(v -> {
+            currentPage = 1;
+            postAdapter.setPosts(new ArrayList<>());
+            fetchPostsFromApi();
+        });
+
+        rvHomeFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null && !isLoading) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        fetchPostsFromApi();
+                    }
+                }
+            }
+        });
 
         fetchPostsFromApi();
     }
 
     private void fetchPostsFromApi() {
-        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
-        Call<List<Post>> call = apiService.getPosts(20);
+        if (isLoading) return;
+        isLoading = true;
 
-        call.enqueue(new Callback<List<Post>>() {
+        ApiService apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
+        Call<List<UnsplashPhoto>> call = apiService.getPosts(RetrofitClient.ACCESS_KEY, currentPage, PAGE_SIZE);
+
+        call.enqueue(new Callback<List<UnsplashPhoto>>() {
             @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+            public void onResponse(Call<List<UnsplashPhoto>> call, Response<List<UnsplashPhoto>> response) {
+                isLoading = false;
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Post> posts = response.body();
-                    postAdapter.setPosts(posts);
+                    List<UnsplashPhoto> unsplashPhotos = response.body();
+                    List<Post> posts = new ArrayList<>();
+                    for (UnsplashPhoto up : unsplashPhotos) {
+                        posts.add(up.toPost());
+                    }
+
+                    if (currentPage == 1) {
+                        postAdapter.setPosts(posts);
+                        savePostsToDatabase(posts, true);
+                    } else {
+                        postAdapter.addPosts(posts);
+                    }
+
+                    currentPage++;
                     btnRefresh.setVisibility(View.GONE);
-                    savePostsToDatabase(posts);
                 } else {
                     handleNetworkFailure();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
+            public void onFailure(Call<List<UnsplashPhoto>> call, Throwable t) {
+                isLoading = false;
                 handleNetworkFailure();
             }
         });
     }
 
-    private void savePostsToDatabase(List<Post> posts) {
+    private void savePostsToDatabase(List<Post> posts, boolean clearOld) {
         executorService.execute(() -> {
+            if (clearOld) {
+                db.postDao().deleteAll();
+            }
             db.postDao().insertPosts(posts);
         });
     }
@@ -99,12 +146,14 @@ public class HomeFragment extends Fragment {
     private void handleNetworkFailure() {
         Toast.makeText(getContext(), "Koneksi gagal, memuat data offline...", Toast.LENGTH_SHORT).show();
         btnRefresh.setVisibility(View.VISIBLE);
-        
+
         executorService.execute(() -> {
             List<Post> offlinePosts = db.postDao().getAllPosts();
             mainHandler.post(() -> {
                 if (offlinePosts != null && !offlinePosts.isEmpty()) {
-                    postAdapter.setPosts(offlinePosts);
+                    if (currentPage == 1) {
+                        postAdapter.setPosts(offlinePosts);
+                    }
                 } else {
                     Toast.makeText(getContext(), "Tidak ada data tersimpan", Toast.LENGTH_SHORT).show();
                 }

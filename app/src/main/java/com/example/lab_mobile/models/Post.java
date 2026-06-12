@@ -49,6 +49,13 @@ public class Post {
 
     // Helper method to get dynamically resized image URL to optimize memory usage
     public String getCustomUrl(int w, int h) {
+        if (downloadUrl != null && downloadUrl.contains("unsplash.com")) {
+            if (downloadUrl.contains("?")) {
+                return downloadUrl + "&w=" + w + "&h=" + h + "&fit=crop";
+            } else {
+                return downloadUrl + "?w=" + w + "&h=" + h + "&fit=crop";
+            }
+        }
         return "https://picsum.photos/id/" + id + "/" + w + "/" + h;
     }
 }

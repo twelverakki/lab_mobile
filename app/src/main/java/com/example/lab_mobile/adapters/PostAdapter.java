@@ -48,6 +48,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         notifyDataSetChanged();
     }
 
+    public void addPosts(List<Post> newPosts) {
+        if (newPosts == null || newPosts.isEmpty()) return;
+        int startPosition = this.postList.size();
+        this.postList.addAll(newPosts);
+        notifyItemRangeInserted(startPosition, newPosts.size());
+    }
+
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

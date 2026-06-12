@@ -46,16 +46,31 @@ public class PostDetailActivity extends AppCompatActivity {
         int postImageResId = getIntent().getIntExtra("post_image_res_id", R.drawable.foto2);
         String username = getIntent().getStringExtra("username");
         String caption = getIntent().getStringExtra("caption");
+        
+        String postImageUrl = getIntent().getStringExtra("post_image_url");
+        String profileImageUrl = getIntent().getStringExtra("profile_image_url");
 
         // Set Foto Profil (Dinamis)
-        if (profileImageUriString != null) {
+        if (profileImageUrl != null) {
+            com.bumptech.glide.Glide.with(this)
+                    .load(profileImageUrl)
+                    .placeholder(R.drawable.profile)
+                    .into(ivPostProfile);
+        } else if (profileImageUriString != null) {
             ivPostProfile.setImageURI(Uri.parse(profileImageUriString));
         } else if (profileImageRes != -1) {
             ivPostProfile.setImageResource(profileImageRes);
         }
 
         // Set Foto Postingan
-        ivPostImage.setImageResource(postImageResId);
+        if (postImageUrl != null) {
+            com.bumptech.glide.Glide.with(this)
+                    .load(postImageUrl)
+                    .placeholder(R.color.black)
+                    .into(ivPostImage);
+        } else {
+            ivPostImage.setImageResource(postImageResId);
+        }
 
         // Set Text
         tvUsernameTitle.setText(username);

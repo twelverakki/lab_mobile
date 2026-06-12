@@ -16,15 +16,32 @@ import java.util.List;
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHolder> {
 
+    public interface OnItemClickListener {
+        void onItemClick(Post post);
+    }
+
     private List<Post> postList;
+    private OnItemClickListener listener;
 
     public ExploreAdapter(List<Post> postList) {
         this.postList = postList;
     }
 
+    public ExploreAdapter(List<Post> postList, OnItemClickListener listener) {
+        this.postList = postList;
+        this.listener = listener;
+    }
+
     public void setPosts(List<Post> posts) {
         this.postList = posts;
         notifyDataSetChanged();
+    }
+
+    public void addPosts(List<Post> newPosts) {
+        if (newPosts == null || newPosts.isEmpty()) return;
+        int startPosition = this.postList.size();
+        this.postList.addAll(newPosts);
+        notifyItemRangeInserted(startPosition, newPosts.size());
     }
 
     @NonNull
@@ -43,6 +60,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
                 .load(post.getCustomUrl(300, 300))
                 .placeholder(R.drawable.profile)
                 .into(holder.ivExploreImage);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(post);
+            }
+        });
     }
 
     @Override
