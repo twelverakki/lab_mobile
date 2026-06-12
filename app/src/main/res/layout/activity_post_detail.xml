@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/bg_color"
     tools:context=".PostDetailActivity">
 
     <!-- Header -->
@@ -24,7 +24,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
+            app:tint="@color/tint_color" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Postingan"
-                android:textColor="#A8A8A8"
+                android:textColor="@color/gray_text"
                 android:textSize="12sp"
                 android:textAllCaps="true" />
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textColor="@color/white"
+                android:textColor="@color/text_color"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -94,14 +94,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:textStyle="bold"
                         />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="29 Agustus 2025"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:textSize="10sp"
                         />
 
@@ -115,7 +115,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/iv_post_profile"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_post_profile"
-                    app:tint="@color/white" />
+                    app:tint="@color/tint_color" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Post Image -->
@@ -138,21 +138,21 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/like"
-                    app:tint="@color/white" />
+                    app:tint="@color/tint_color" />
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/comment"
-                    app:tint="@color/white" />
+                    app:tint="@color/tint_color" />
 
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/paper_plane"
-                    app:tint="@color/white" />
+                    app:tint="@color/tint_color" />
 
                 <View
                     android:layout_width="0dp"
@@ -163,7 +163,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/arsip"
-                    app:tint="@color/white" />
+                    app:tint="@color/tint_color" />
             </LinearLayout>
 
             <!-- Likes & Caption -->
@@ -177,7 +177,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="107 suka"
-                    android:textColor="@color/white"
+                    android:textColor="@color/text_color"
                     android:textStyle="bold" />
 
                 <TextView
@@ -186,14 +186,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Mengabadikan sebuah moment itu penting, kenapa? karena di setiap potretan ada kenangan yang tidak bisa kita ulang kembali."
-                    android:textColor="@color/white" />
+                    android:textColor="@color/text_color" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="29 Agustus 2025"
-                    android:textColor="#A8A8A8"
+                    android:textColor="@color/gray_text"
                     android:textSize="12sp" />
             </LinearLayout>
 

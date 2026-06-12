@@ -136,6 +136,7 @@ public class ProfileFragment extends Fragment {
         ivPost1 = view.findViewById(R.id.iv_post_1);
         ivPost2 = view.findViewById(R.id.iv_post_2);
         ivPost3 = view.findViewById(R.id.iv_post_3);
+        ImageView ivThemeToggle = view.findViewById(R.id.iv_theme_toggle);
 
         tvName.setText(userChandra.getNama());
         tvBio.setText(userChandra.getBio());
@@ -179,6 +180,25 @@ public class ProfileFragment extends Fragment {
         if (llHighlight != null) {
             llHighlight.setOnClickListener(v -> {
                 Toast.makeText(requireContext(), "Membuka Highlight Story...", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // Theme Toggle Click
+        if (ivThemeToggle != null) {
+            SharedPreferences themePrefs = requireActivity().getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE);
+            ivThemeToggle.setOnClickListener(v -> {
+                SharedPreferences.Editor editor = themePrefs.edit();
+                int currentMode = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+                if (currentMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
+                    editor.putBoolean("isDarkMode", false);
+                    Toast.makeText(getContext(), "Mengaktifkan Mode Terang", Toast.LENGTH_SHORT).show();
+                } else {
+                    androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+                    editor.putBoolean("isDarkMode", true);
+                    Toast.makeText(getContext(), "Mengaktifkan Mode Gelap", Toast.LENGTH_SHORT).show();
+                }
+                editor.apply();
             });
         }
 
